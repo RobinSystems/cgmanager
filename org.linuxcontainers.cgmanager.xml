@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- cgmanager
+
+     org.linuxcontainers.cgmanager.xml - interface definition for manager
+
+     Copyright © 2013 Stéphane Graber
+     Author: Stéphane Graber <stgraber@ubuntu.com>.
+     This program is free software; you can redistribute it and/or modify
+     it under the terms of the GNU General Public License version 2, as
+     published by the Free Software Foundation.
+     
+     This program is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+     
+     You should have received a copy of the GNU General Public License along
+     with this program; if not, write to the Free Software Foundation, Inc.,
+     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<!DOCTYPE node PUBLIC
+  "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+  "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+
+<node name="/org/linuxcontainers/cgmanager">
+  <interface name="org.linuxcontainers.cgmanager0_0">
+
+    <!-- Every Scm call sends requestor's creds as a first
+	 scm credential over the passed-in fd -->
+
+    <!-- The following methods accept comma-separated lists
+         of multiple controllers as well as 'all':
+	 Create*, Chown*, Chmod*, MovePid*, Remove, RemoveOnEmpty -->
+
+    <method name="Ping">
+      <arg name="junk" type="i" direction="in" />
+    </method>
+    <method name="GetPidCgroupScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- Pid is passed as a scm_cred over sockfd -->
+      <!-- Result is printed over same sockfd -->
+    </method>
+    <method name="GetPidCgroup">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="pid" type="i" direction="in" />
+      <arg name="output" type="s" direction="out" />
+      <!-- client must be in manager's pidns -->
+    </method>
+    <method name="GetPidCgroupAbsScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- Pid is passed as a scm_cred over sockfd -->
+      <!-- Result is printed over same sockfd -->
+    </method>
+    <method name="GetPidCgroupAbs">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="pid" type="i" direction="in" />
+      <arg name="output" type="s" direction="out" />
+      <!-- client must be in manager's pidns -->
+    </method>
+    <method name="CreateScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- 2/1/0 (existed/pass/fail) return value comes over sockfd -->
+    </method>
+    <method name="Create">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="existed" type="i" direction="out" />
+    </method>
+    <method name="ChownScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- uid+gid are passed as scm_cred over sockfd-->
+      <!-- 1/0 (pass/fail) return value comes over sockfd -->
+    </method>
+    <method name="Chown">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="uid" type="i" direction="in" />
+      <arg name="gid" type="i" direction="in" />
+      <!-- caller must be in manager's pid and user namespaces -->
+    </method>
+    <method name="ChmodScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="file" type="s" direction="in" />
+      <arg name="mode" type="i" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- 1/0 (pass/fail) return value comes over sockfd -->
+    </method>
+    <method name="Chmod">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="file" type="s" direction="in" />
+      <arg name="mode" type="i" direction="in" />
+    </method>
+    <method name="MovePidScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- Pid is passed as a scm_cred over sockfd -->
+      <!-- 1/0 (pass/fail) return value comes over sockfd -->
+    </method>
+    <method name="MovePid">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="pid" type="i" direction="in" />
+      <!-- task must be in manager's pidns -->
+    </method>
+    <method name="MovePidAbsScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- Pid is passed as a scm_cred over sockfd -->
+      <!-- 1/0 (pass/fail) return value comes over sockfd -->
+    </method>
+    <method name="MovePidAbs">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="pid" type="i" direction="in" />
+      <!-- task must be in manager's pidns -->
+    </method>
+    <method name="GetValueScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="key" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- Result is printed over sockfd -->
+    </method>
+    <method name="GetValue">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="key" type="s" direction="in" />
+      <arg name="value" type="s" direction="out" />
+    </method>
+    <method name="SetValueScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="key" type="s" direction="in" />
+      <arg name="value" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- 1/0 (pass/fail) return value comes over sockfd -->
+    </method>
+    <method name="SetValue">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="key" type="s" direction="in" />
+      <arg name="value" type="s" direction="in" />
+    </method>
+    <method name="RemoveScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="recursive" type="i" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- 2/1/0 (didntexist/pass/fail) return value comes over sockfd -->
+    </method>
+    <method name="Remove">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="recursive" type="i" direction="in" />
+      <arg name="existed" type="i" direction="out" />
+    </method>
+    <method name="GetTasksScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- nrtasks + pids as scm creds return value comes over sockfd -->
+    </method>
+    <method name="GetTasks">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="output" type="ai" direction="out" />
+    </method>
+    <method name="GetTasksRecursiveScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- nrtasks + pids as scm creds return value comes over sockfd -->
+    </method>
+    <method name="GetTasksRecursive">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="output" type="ai" direction="out" />
+    </method>
+    <method name="ListChildrenScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- names will be returned over sockfd -->
+    </method>
+    <method name="ListChildren">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="output" type="as" direction="out" />
+    </method>
+    <method name="RemoveOnEmptyScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+    </method>
+    <method name="RemoveOnEmpty">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+    </method>
+    <!-- Prune sets removeonempty recursively and the removes,
+         ignoring failures due to EBUSY -->
+    <method name="PruneScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- 2/1/0 (didntexist/pass/fail) return value comes over sockfd -->
+    </method>
+    <!-- Prune calls removeonempty, then calls itself on any child cgroups,
+         Then calls remove.  This will not kill any running tasks, but will
+	 ensure that when all running tasks are gone, the cgroups will be
+	 removed.
+	 Note that a 'KillAndRemove' is not provided because there is no
+	 mechanism for cgmanager to know whether LSMs etc would allow
+	 the caller to kill a task.  -->
+    <method name="Prune">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+    </method>
+    <method name="ListControllers">
+      <arg name="output" type="as" direction="out" />
+    </method>
+    <method name="ListKeysScm">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <arg name="sockfd" type="h" direction="in" />
+      <!-- names will be returned over sockfd -->
+    </method>
+    <method name="ListKeys">
+      <arg name="controller" type="s" direction="in" />
+      <arg name="cgroup" type="s" direction="in" />
+      <!-- name, ownerid, groupid, perms -->
+      <arg name="output" type="a(suuu)" direction="out" />
+    </method>
+    <!-- still to add: low priority (kernel not ready),
+	 getEventfd
+	 -->
+    <property name="api_version" type="i" access="read" />
+  </interface>
+</node>
